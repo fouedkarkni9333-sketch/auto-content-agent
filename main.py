@@ -11,7 +11,8 @@ def generate_ai_story():
         return
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # تم تغيير اسم النموذج هنا لضمان التوافق مع الإصدارات الحديثة
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
