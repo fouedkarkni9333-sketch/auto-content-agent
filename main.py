@@ -1,58 +1,47 @@
 import os
 import datetime
-import random
+import google.generativeai as genai
 
-def generate_story():
-    print("📖 بدء تشغيل نظام توليد القصص مع الصور التعبيرية...")
+def generate_ai_story():
+    print("🤖 جاري الاتصال بالذكاء الاصطناعي لتوليد قصة فريدة وجديدة...")
     
+    # استدعاء مفتاح السيرفر السري
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("خطأ: مفتاح الذكاء الاصطناعي غير موجود في إعدادات جيت هاب!")
+        return
+
+    genai.configure(api_key=api_key)
+    
+    # استخدام نموذج جيميني السريع والمجاني
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب ورئيسي، واجعل الأسلوب مشوقاً."
+    
+    response = model.generate_content(prompt)
+    story_text = response.text
+
     now = datetime.datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H-%M-%S")
     
-    # بنك القصص مع إضافة رابط صورة تعبيرية مجانية لكل قصة
-    story_bank = [
-        {
-            "title": "حكاية العقل البشري والابتكار",
-            "genre": "قصة تحفيزية",
-            "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60",
-            "content": "في قرية هادئة، كان فني شاب يقضي لياليه وسط الأجهزة. بالصبر والأدوات البسيطة، استطاع أن يصنع أول نظام أتمتة يغير حياته."
-        },
-        {
-            "title": "سر الخوارزمية في عمق السيرفرات",
-            "genre": "خيال علمي",
-            "image_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=60",
-            "content": "في عالم رقمي يتسارع فيه الزمن، كانت الأكواد تعمل بصمت لترتيب المعرفة وصنع إمبراطوريات رقمية كاملة."
-        },
-        {
-            "title": "ملحمة الصيانة الكبرى",
-            "genre": "دراما واقعية",
-            "image_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=60",
-            "content": "توقف خط الإنتاج فجأة وسط الليل، وبخبرة هادئة وأدوات بسيطة استطاع الفني إعادة الحياة للآلة في دقائق معدودة."
-        }
-    ]
-    
-    selected_story = random.choice(story_bank)
-    
-    # هيكل الملف مع الصورة التعبيرية في الأعلى
     story_markdown = f"""
-# 📚 {selected_story['title']}
-*التاريخ: {date_str} | التصنيف: {selected_story['genre']}*
-
-![صورة تعبيرية]({selected_story['image_url']})
+# 🚀 قصة ذكية مولدة بالذكاء الاصطناعي
+*التاريخ: {date_str} | الوقت: {time_str}*
 
 ---
 
-{selected_story['content']}
+{story_text}
 
 ---
-*تم توليد هذه القصة والصورة التعبيرية تلقائياً عبر بايثون وسيرفرات جيت هاب.*
+*تم توليد هذه القصة بالكامل لحظياً عبر نموذج الذكاء الاصطناعي وسيرفرات جيت هاب.*
 """
 
-    filename = f"story_{date_str.replace('-', '_')}_{time_str.replace('-', '_')}.md"
+    filename = f"ai_story_{date_str.replace('-', '_')}_{time_str.replace('-', '_')}.md"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(story_markdown)
         
-    print(f"تم حفظ القصة مع الصورة في الملف: {filename}")
+    print(f"تم حفظ القصة المولدة بالذكاء الاصطناعي في الملف: {filename}")
 
 if __name__ == "__main__":
-    generate_story()
+    generate_ai_story()
