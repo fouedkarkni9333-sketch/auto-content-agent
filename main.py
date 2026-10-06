@@ -1,5 +1,6 @@
 import os
 import datetime
+import time
 import google.generativeai as genai
 
 def generate_ai_story():
@@ -11,13 +12,18 @@ def generate_ai_story():
         return
 
     genai.configure(api_key=api_key)
-    # استخدام النموذج المطلوب الموصى به في رسالة الخطأ
-    model = genai.GenerativeModel('gemini-3.8-flash')
+    
+    # استخدام النموذج القياسي المستقر
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
-    response = model.generate_content(prompt)
-    story_text = response.text
+    try:
+        response = model.generate_content(prompt)
+        story_text = response.text
+    except Exception as e:
+        print(f"حدث خطأ أثناء التوليد (قد يكون بسبب تجاوز الحد المسموح): {e}")
+        return
 
     now = datetime.datetime.now()
     date_str = now.strftime("%Y-%m-%d")
