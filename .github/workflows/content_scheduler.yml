@@ -1,50 +1,38 @@
-import os
-import datetime
-import time
-import google.generativeai as genai
+name: Autonomous Content Generator
 
-def generate_ai_story():
-    print("🤖 جاري الاتصال بالذكاء الاصطناعي لتوليد قصة فريدة...")
+on:
+  workflow_dispatch:
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
     
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        print("خطأ: مفتاح الذكاء الاصطناعي غير موجود!")
-        return
+    permissions:
+      contents: write
 
-    genai.configure(api_key=api_key)
-    
-    # استخدام النموذج القياسي المستقر
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
-    prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
-    
-    try:
-        response = model.generate_content(prompt)
-        story_text = response.text
-    except Exception as e:
-        print(f"حدث خطأ أثناء التوليد (قد يكون بسبب تجاوز الحد المسموح): {e}")
-        return
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    now = datetime.datetime.now()
-    date_str = now.strftime("%Y-%m-%d")
-    time_str = now.strftime("%H-%M-%S")
-    
-    story_markdown = f"""# 🚀 قصة ذكية مولدة بالذكاء الاصطناعي
-*التاريخ: {date_str} | الوقت: {time_str}*
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
----
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade google-generativeai
 
-{story_text}
+      - name: Run Python script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py
 
----
-*تم توليد هذه القصة بالكامل لحظياً عبر الذكاء الاصطناعي وسيرفرات جيت هاب.*
-"""
-
-    filename = f"ai_story_{date_str.replace('-', '_')}_{time_str.replace('-', '_')}.md"
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(story_markdown)
-        
-    print(f"تم حفظ الملف بنجاح: {filename}")
-
-if __name__ == "__main__":
-    generate_ai_story()
+      - name: Commit and push generated story
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add ai_story_*.md
+          git commit -m "🤖 Add newly generated AI story automatically" || echo "No changes to commit"
+          git push
