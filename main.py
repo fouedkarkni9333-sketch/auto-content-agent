@@ -12,17 +12,10 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # البحث تلقائياً عن أول نموذج مدعوم لتوليد المحتوى
-    model_name = None
-    for m in genai.list_models():
-        if 'generateContent' in m.supported_generation_methods:
-            model_name = m.name
-            break
-            
-    if not model_name:
-        model_name = 'models/gemini-1.5-flash'
-        
+    # استخدام النموذج الموصى به والمتاح حالياً
+    model_name = 'models/gemini-3.8-flash'
     print(f"using model: {model_name}")
+    
     model = genai.GenerativeModel(model_name)
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
