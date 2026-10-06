@@ -1,6 +1,5 @@
 import os
 import datetime
-import time
 import google.generativeai as genai
 
 def generate_ai_story():
@@ -12,18 +11,12 @@ def generate_ai_story():
         return
 
     genai.configure(api_key=api_key)
-    
-    # استخدام النموذج القياسي المستقر
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
-    try:
-        response = model.generate_content(prompt)
-        story_text = response.text
-    except Exception as e:
-        print(f"حدث خطأ أثناء التوليد (قد يكون بسبب تجاوز الحد المسموح): {e}")
-        return
+    response = model.generate_content(prompt)
+    story_text = response.text
 
     now = datetime.datetime.now()
     date_str = now.strftime("%Y-%m-%d")
@@ -40,7 +33,8 @@ def generate_ai_story():
 *تم توليد هذه القصة بالكامل لحظياً عبر الذكاء الاصطناعي وسيرفرات جيت هاب.*
 """
 
-    filename = f"ai_story_{date_str.replace('-', '_')}_{time_str.replace('-', '_')}.md"
+    # تسمية واضحة وثابتة مع التاريخ والوقت لضمان ظهورها مباشرة
+    filename = f"story_{date_str}_{time_str.replace(':', '_')}.md"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(story_markdown)
         
