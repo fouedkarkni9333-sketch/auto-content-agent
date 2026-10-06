@@ -33,6 +33,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add ai_story_*.md
+          git add .
           git commit -m "🤖 Add newly generated AI story automatically" || echo "No changes to commit"
           git push
