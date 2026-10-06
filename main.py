@@ -12,7 +12,7 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # البحث تلقائياً عن أول نموذج مدعوم لتوليد المحتوى لتجنب أخطاء 404 نهائياً
+    # البحث تلقائياً عن أول نموذج مدعوم لتوليد المحتوى
     model_name = None
     for m in genai.list_models():
         if 'generateContent' in m.supported_generation_methods:
@@ -20,9 +20,9 @@ def generate_ai_story():
             break
             
     if not model_name:
-        model_name = 'models/gemini-1.5-flash' # قيمة احتياطية
+        model_name = 'models/gemini-1.5-flash'
         
-    print(using model: {model_name})
+    print(f"using model: {model_name}")
     model = genai.GenerativeModel(model_name)
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
