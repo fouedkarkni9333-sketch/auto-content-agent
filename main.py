@@ -11,8 +11,8 @@ def generate_ai_story():
         return
 
     genai.configure(api_key=api_key)
-    # استخدام اسم النموذج المحدد والصحيح لتجنب خطأ 404
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    # استخدام النموذج المطلوب الموصى به في رسالة الخطأ
+    model = genai.GenerativeModel('gemini-3.8-flash')
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
