@@ -1,6 +1,8 @@
 import os
+import time
 import datetime
 import google.generativeai as genai
+from google.api_core.exceptions import ResourceExhausted
 
 def generate_ai_story():
     print("🤖 جاري الاتصال بالذكاء الاصطناعي...")
@@ -12,17 +14,34 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # استخدام النموذج الموصى به والمتاح حالياً
     model_name = 'models/gemini-3.8-flash'
     print(f"using model: {model_name}")
     
     model = genai.GenerativeModel(model_name)
-    
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
-    response = model.generate_content(prompt)
-    story_text = response.text
+    response = None
+    max_retries = 3
+    retry_delay = 10  # ثواني الانتظار بين المحاولات عند ضغط الخادم
 
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"محاولة التوليد (رقم {attempt})...")
+            response = model.generate_content(prompt)
+            break
+        except ResourceExhausted as e:
+            if attempt < max_retries:
+                print(f"⚠️ تم الوصول لحده الأقصى المؤقت (Quota Exceeded). الانتظار لمدة {retry_delay} ثوانٍ قبل إعادة المحاولة...")
+                time.sleep(retry_delay)
+                retry_delay *= 2  # مضاعفة وقت الانتظار تدريجياً
+            else:
+                print("❌ فشلت جميع المحاولات بسبب تجاوز الحد المسموح. يرجى الانتظار دقيقة ثم إعادة تشغيل الـ Action.")
+                raise e
+
+    if not response:
+        return
+
+    story_text = response.text
     now = datetime.datetime.now()
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H-%M-%S")
