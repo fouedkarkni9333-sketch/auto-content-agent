@@ -3,7 +3,7 @@ import datetime
 import google.generativeai as genai
 
 def generate_ai_story():
-    print("🤖 جاري الاتصال بالذكاء الاصطناعي لتوليد قصة فريدة...")
+    print("🤖 جاري الاتصال بالذكاء الاصطناعي...")
     
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
@@ -11,7 +11,19 @@ def generate_ai_story():
         return
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    # البحث تلقائياً عن أول نموذج مدعوم لتوليد المحتوى لتجنب أخطاء 404 نهائياً
+    model_name = None
+    for m in genai.list_models():
+        if 'generateContent' in m.supported_generation_methods:
+            model_name = m.name
+            break
+            
+    if not model_name:
+        model_name = 'models/gemini-1.5-flash' # قيمة احتياطية
+        
+    print(using model: {model_name})
+    model = genai.GenerativeModel(model_name)
     
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
@@ -33,7 +45,6 @@ def generate_ai_story():
 *تم توليد هذه القصة بالكامل لحظياً عبر الذكاء الاصطناعي وسيرفرات جيت هاب.*
 """
 
-    # تسمية واضحة وثابتة مع التاريخ والوقت لضمان ظهورها مباشرة
     filename = f"story_{date_str}_{time_str.replace(':', '_')}.md"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(story_markdown)
