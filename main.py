@@ -46,7 +46,7 @@ def content_agent():
         return
 
     selected_topic = plan_response.text
-    print(تم اختيار الموضوع بنجاح:\n{selected_topic[:150]}...\n)
+    print(f"تم اختيار الموضوع بنجاح:\n{selected_topic[:150]}...\n")
 
     # الخطوة 2 (التنفيذ والكتابة المعمقة): توليد القصة أو المقال بناءً على اختيار الوكيل
     execution_prompt = f"""
