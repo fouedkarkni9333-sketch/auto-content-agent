@@ -14,11 +14,10 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # استخدام اسم الموديل القياسي المدعوم بشكل مباشر
-    model_name = 'gemini-1.5-flash'
+    # استخدام الموديل القياسي المتوافق مع التحديثات الحديثة
+    model_name = 'gemini-2.5-flash'
     print(f"using model: {model_name}")
     
-    # إعدادات الأمان والطلبات مع تحديد مهلة زمنية للاتصال إذا لزم الأمر
     model = genai.GenerativeModel(model_name)
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
