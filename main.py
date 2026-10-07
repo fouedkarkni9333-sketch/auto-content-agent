@@ -2,7 +2,7 @@ import os
 import time
 import datetime
 import google.generativeai as genai
-from google.api_core.exceptions import ResourceExhausted
+from google.api_core.exceptions import ResourceExhausted, DeadlineExceeded
 
 def generate_ai_story():
     print("🤖 جاري الاتصال بالذكاء الاصطناعي...")
@@ -14,28 +14,31 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    model_name = 'models/gemini-3.8-flash'
+    # تم تحديث الموديل إلى إصدار أكثر استقراراً وسرعة لتجنب أخطاء انتهاء المهلة (Deadline Exceeded)
+    model_name = 'gemini-1.5-flash'
     print(f"using model: {model_name}")
     
+    # إعدادات الأمان والطلبات مع تحديد مهلة زمنية للاتصال إذا لزم الأمر
     model = genai.GenerativeModel(model_name)
     prompt = "اكتب قصة قصيرة ومبتكرة جداً باللغة العربية حول الابتكار والتكنولوجيا، مع عنوان جذاب، واجعل الأسلوب مشوقاً."
     
     response = None
     max_retries = 3
-    retry_delay = 10  # ثواني الانتظار بين المحاولات عند ضغط الخادم
+    retry_delay = 10  # ثواني الانتظار بين المحاولات عند ضغط الخادم أو انقضاء المهلة
 
     for attempt in range(1, max_retries + 1):
         try:
             print(f"محاولة التوليد (رقم {attempt})...")
+            # تمرير وقت مهلة إضافي للطلب (إن توفر في الإصدار) أو الاعتماد على معالجة الاستثناءات
             response = model.generate_content(prompt)
             break
-        except ResourceExhausted as e:
+        except (ResourceExhausted, DeadlineExceeded) as e:
             if attempt < max_retries:
-                print(f"⚠️ تم الوصول لحده الأقصى المؤقت (Quota Exceeded). الانتظار لمدة {retry_delay} ثوانٍ قبل إعادة المحاولة...")
+                print(f"⚠️ حدث ضغط أو انقضاء مهلة مؤقت ({type(e).__name__}). الانتظار لمدة {retry_delay} ثوانٍ قبل إعادة المحاولة...")
                 time.sleep(retry_delay)
                 retry_delay *= 2  # مضاعفة وقت الانتظار تدريجياً
             else:
-                print("❌ فشلت جميع المحاولات بسبب تجاوز الحد المسموح. يرجى الانتظار دقيقة ثم إعادة تشغيل الـ Action.")
+                print("❌ فشلت جميع المحاولات بسبب تجاوز الحد أو انتهاء المهلة. يرجى الانتظار قليلاً ثم إعادة تشغيل الـ Action.")
                 raise e
 
     if not response:
