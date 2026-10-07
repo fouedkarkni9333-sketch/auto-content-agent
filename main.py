@@ -14,7 +14,7 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # تم تحديث الموديل إلى إصدار أكثر استقراراً وسرعة لتجنب أخطاء انتهاء المهلة (Deadline Exceeded)
+    # استخدام اسم الموديل القياسي المدعوم بشكل مباشر
     model_name = 'gemini-1.5-flash'
     print(f"using model: {model_name}")
     
@@ -29,7 +29,6 @@ def generate_ai_story():
     for attempt in range(1, max_retries + 1):
         try:
             print(f"محاولة التوليد (رقم {attempt})...")
-            # تمرير وقت مهلة إضافي للطلب (إن توفر في الإصدار) أو الاعتماد على معالجة الاستثناءات
             response = model.generate_content(prompt)
             break
         except (ResourceExhausted, DeadlineExceeded) as e:
