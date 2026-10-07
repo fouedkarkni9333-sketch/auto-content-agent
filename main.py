@@ -14,8 +14,8 @@ def generate_ai_story():
 
     genai.configure(api_key=api_key)
     
-    # استخدام الموديل القياسي المتوافق مع التحديثات الحديثة
-    model_name = 'gemini-2.5-flash'
+    # العودة إلى الموديل المطلوب رسمياً من رسالة الخطأ
+    model_name = 'models/gemini-3.8-flash'
     print(f"using model: {model_name}")
     
     model = genai.GenerativeModel(model_name)
